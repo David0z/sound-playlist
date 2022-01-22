@@ -1,0 +1,13 @@
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+body div {
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 3rem;
+  background: cyan;
+}
+/*# sourceMappingURL=main.css.map */
