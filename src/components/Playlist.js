@@ -1,7 +1,7 @@
 import React from 'react';
 import AudioElement from './AudioElement';
 
-export default function Playlist({ isPlaying, setIsPlaying, audios, setAudios, isEditing, setIsEditing, togglePlaying}) {
+export default function Playlist({ isPlaying, audios, setAudios, isEditing, togglePlaying, playMode, setPlayingAudioNode }) {
 
   return (
     <div className='playlist'>
@@ -9,7 +9,7 @@ export default function Playlist({ isPlaying, setIsPlaying, audios, setAudios, i
             {
                 audios.map(audio => {
                     return (
-                        <AudioElement isPlaying={isPlaying} setIsPlaying={setIsPlaying} audio={audio} setAudios={setAudios} isEditing={isEditing} setIsEditing={setIsEditing} togglePlaying={togglePlaying} key={audio.id}/>
+                        <AudioElement isPlaying={isPlaying} audio={audio} audios={audios} setAudios={setAudios} isEditing={isEditing} togglePlaying={togglePlaying} key={audio.id} playMode={playMode} setPlayingAudioNode={setPlayingAudioNode}/>
                     );
                 })
             }

@@ -1,7 +1,8 @@
 import React from 'react';
 import { FaVolumeUp, FaVolumeMute } from "react-icons/fa";
+import { useEffect } from 'react/cjs/react.development';
 
-export default function VolumeControl({setVolume, volume}) {
+export default function VolumeControl({ setVolume, volume, playingAudioNode }) {
 
     function handleVolumeChange(e) {
         setVolume(e.target.value);

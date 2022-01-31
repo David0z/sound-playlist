@@ -1,26 +1,69 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import TopMenu from "./components/TopMenu";
 import BottomMenu from "./components/BottomMenu";
+// TEMPORARY
+import { v4 as uuidv4 } from 'uuid';
 
 function App() {
   // STATE
 
   const [audios, setAudios] = useState([
-    {title: 'The Sound Title 1', length: '5:01', playing: true, id: 1},
-    {title: 'The Sound Title 2', length: '5:01', playing: false, id: 2},
-    {title: 'The Sound Title 3', length: '5:01', playing: false, id: 3},
-    {title: 'The Sound Title 4', length: '5:01', playing: false, id: 4},
-    {title: 'The Sound Title 5', length: '5:01', playing: false, id: 5},
-    {title: 'The Sound Title 6', length: '5:01', playing: false, id: 6},
-    {title: 'The Sound Title 7', length: '5:01', playing: false, id: 7},
-    {title: 'The Sound Title 8', length: '5:01', playing: false, id: 8},
-    {title: 'The Sound Title 9', length: '5:01', playing: false, id: 9},
+    {
+      title: 'First Sound Title',
+      url: 'https://actions.google.com/sounds/v1/crowds/voices_angry.ogg',
+      playing: false,
+      id: uuidv4()
+    },
+    {
+      title: 'Second Sound Title',
+      url: 'https://actions.google.com/sounds/v1/crowds/voices_on_street_accent.ogg',
+      playing: false,
+      id: uuidv4()
+    },
+    {
+      title: 'Tird Sound Title',
+      url: 'https://actions.google.com/sounds/v1/emergency/emergency_siren_close_long.ogg',
+      playing: false,
+      id: uuidv4()
+    },
+    {
+      title: 'Fourth Sound Title',
+      url: 'https://actions.google.com/sounds/v1/crowds/voices_angry.ogg',
+      playing: false,
+      id: uuidv4()
+    },
+    {
+      title: 'Fifth Sound Title',
+      url: 'https://actions.google.com/sounds/v1/crowds/voices_on_street_accent.ogg',
+      playing: false,
+      id: uuidv4()
+    },
+    {
+      title: 'Sixth Sound Title',
+      url: 'https://actions.google.com/sounds/v1/emergency/emergency_siren_close_long.ogg',
+      playing: false,
+      id: uuidv4()
+    },
   ]);
   const [volume, setVolume] = useState(50);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [playingAudioNode, setPlayingAudioNode] = useState(null);
+  const isMounted = useRef(false);
 
-  function togglePlaying(id) {
+  useEffect(() => {
+    if (isMounted.current) {
+      if (playingAudioNode != null) {
+        playingAudioNode.volume = volume / 100;
+      }
+    } else {
+      isMounted.current = true;
+    }
+  }, [volume, playingAudioNode]);
+
+
+
+  function togglePlaying(id, audioNode) {
     if(isPlaying && audios.filter(audio => audio.playing === true)[0].id != id) {
     } else {
       setIsPlaying(!isPlaying);
@@ -36,13 +79,34 @@ function App() {
         return audio;
       }
     }));
+
+    setPlayingAudioNode(audioNode);
+    
+    if (isPlaying === false) {
+      if (audioNode == playingAudioNode || playingAudioNode == null) {
+        audioNode.play();
+      } else {
+        playingAudioNode.pause();
+        playingAudioNode.currentTime = 0;
+        audioNode.play();
+      }
+    } else {
+      if (audioNode == playingAudioNode || playingAudioNode == null) {
+        audioNode.pause();
+      } else {
+        playingAudioNode.pause();
+        playingAudioNode.currentTime = 0;
+        audioNode.play();
+      }
+    }
+
   }
 
   return (
     <div className="window">
       <div className="wrapper">
-        <TopMenu isEditing={isEditing} setIsEditing={setIsEditing} />
-        <BottomMenu setVolume={setVolume} volume={volume} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios} isEditing={isEditing} setIsEditing={setIsEditing} togglePlaying={togglePlaying}/>
+        <TopMenu playingAudioNode={playingAudioNode} setPlayingAudioNode={setPlayingAudioNode} isEditing={isEditing} setIsEditing={setIsEditing} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios}/>
+        <BottomMenu playingAudioNode={playingAudioNode} setVolume={setVolume} volume={volume} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios} isEditing={isEditing} setIsEditing={setIsEditing} togglePlaying={togglePlaying} setPlayingAudioNode={setPlayingAudioNode}/>
       </div>
     </div>
   );
