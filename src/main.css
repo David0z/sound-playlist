@@ -349,7 +349,7 @@ html, body {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  padding: 0 0.6rem;
+  padding: 0 0.6rem 0 1rem;
   -webkit-box-align: end;
       -ms-flex-align: end;
           align-items: flex-end;
@@ -567,6 +567,7 @@ html, body {
 .menu__bottom .playlist-display .playlist__wrapper .audio .editing__drag:active {
   cursor: -webkit-grabbing;
   cursor: grabbing;
+  background-color: var(--theme-four);
 }
 
 .menu__bottom .playlist-display .playlist__wrapper .audio .editing__delete:hover {

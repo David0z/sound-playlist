@@ -5,7 +5,7 @@ export default function TimingControl({ isPlaying, setIsPlaying, playingAudioNod
 
   function handlePlayPause() {
     if (isPlaying === false) {
-      if (audios == [] || isEditing === true) {
+      if (audios.length === 0 || isEditing === true) {
         return;
       } else if (playingAudioNode === null) {
         setIsPlaying(true);
@@ -27,7 +27,7 @@ export default function TimingControl({ isPlaying, setIsPlaying, playingAudioNod
   }
 
   function handleForward() {
-    if (playingAudioNode === null || isEditing === true) {
+    if (playingAudioNode === null || isEditing === true || audios.length === 1) {
       return;
     } else {
       playingAudioNode.pause();
@@ -88,7 +88,7 @@ export default function TimingControl({ isPlaying, setIsPlaying, playingAudioNod
   }
 
   function handleBackward() {
-    if (playingAudioNode === null || isEditing === true) {
+    if (playingAudioNode === null || isEditing === true || audios.length === 1) {
       return;
     } else {
       playingAudioNode.pause();
@@ -98,7 +98,6 @@ export default function TimingControl({ isPlaying, setIsPlaying, playingAudioNod
       }
 
       const currentIndex = audios.indexOf(audios.filter(audio => audio.playing === true)[0]);
-      console.log(currentIndex);
 
       switch (playMode[0]) {
         case 'repeat-playlist':

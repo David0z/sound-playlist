@@ -283,7 +283,7 @@ html, body {
                 height: 2rem;
                 display: flex;
                 justify-content: space-between;
-                padding: 0 0.6rem;
+                padding: 0 0.6rem 0 1rem;
                 align-items: flex-end;
                 border-radius: 1rem 1rem 0 0;
                 position: relative;
@@ -465,6 +465,7 @@ html, body {
                                 }
                                 &:active {
                                     cursor: grabbing;
+                                    background-color: var(--theme-four);
                                 }
                             }
 

@@ -22,7 +22,7 @@ export default function TopMenu({ isEditing, setIsEditing, isPlaying, setIsPlayi
   }
 
   function handleEditing() {
-    if (audios == []) {
+    if (audios.length === 0 && isEditing === false) {
       return;
     }
     if (playingAudioNode != null) {

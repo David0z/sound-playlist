@@ -1,22 +1,33 @@
 import { React, useRef, useState} from 'react';
 import { FaPlay, FaPause, FaGripVertical, FaTimes } from "react-icons/fa";
 import { useEffect } from 'react/cjs/react.development';
+import { Draggable } from 'react-beautiful-dnd';
 
-export default function AudioElement({isPlaying, audios, setAudios, isEditing, togglePlaying, audio, playMode, setPlayingAudioNode }) {
+export default function AudioElement({isPlaying, audios, setAudios, isEditing, togglePlaying, audio, playMode, setPlayingAudioNode, handleDeleteElement }) {
 
     const audioNode = useRef(null);
+    const [isGrabbing, setIsGrabbing] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [audioDuration, setAudioDuration] = useState(0);
 
     useEffect(() => {
         if (isEditing === false && audio.playing === true) {
             setPlayingAudioNode(audioNode.current);
-            audioNode.current.play();
+            if (isPlaying === false) {
+                audioNode.current.pause();
+            } else {
+                audioNode.current.play();
+            }
         }
     }, [audios]);
     
     function handleAudioEnd() {
         if (isPlaying === true) {
+                if (audios.length === 1) {
+                    audioNode.current.currentTime = 0;
+                    audioNode.current.play();
+                    return;
+                }
                 const currentIndex = audios.indexOf(audio);
                 switch(playMode[0]) {
                     case 'repeat-playlist':
@@ -95,13 +106,15 @@ export default function AudioElement({isPlaying, audios, setAudios, isEditing, t
     }
 
   return (
-    <div className='audio'>
+    <Draggable draggableId={audio.id} index={audios.indexOf(audio)} isDragDisabled={isGrabbing === true ? false : true}>
+    {(provided) => (
+        <div className='audio' {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
         <audio src={audio.url} ref={audioNode} onTimeUpdate={handleTimeUpdate} onLoadedMetadata={() => {
             setAudioDuration(audioNode.current.duration);
             
             }} onEnded={handleAudioEnd}/>
 
-        {isEditing === true && <div className='editing editing__drag'>
+        {isEditing === true && <div className='editing editing__drag' onMouseMove={ () => setIsGrabbing(true)} onMouseLeave={() => setIsGrabbing(false)}>
             <FaGripVertical />
         </div>}
         
@@ -140,7 +153,8 @@ export default function AudioElement({isPlaying, audios, setAudios, isEditing, t
         </div>
 
         {isEditing === true && 
-        <div className='editing editing__delete'>
+        <div className='editing editing__delete' 
+        onClick={() => handleDeleteElement(audio.id)}>
             <FaTimes />
         </div>}
 
@@ -158,6 +172,8 @@ export default function AudioElement({isPlaying, audios, setAudios, isEditing, t
         })()
         }
         </div>}
-</div>
+    </div>
+    )}
+    </Draggable>
   );
 }
