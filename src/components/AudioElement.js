@@ -107,8 +107,9 @@ export default function AudioElement({isPlaying, audios, setAudios, isEditing, t
 
   return (
     <Draggable draggableId={audio.id} index={audios.indexOf(audio)} isDragDisabled={isGrabbing === true ? false : true}>
-    {(provided) => (
-        <div className='audio' {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
+    {(provided, snapshot) => (
+        <div className='audio' {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} style={{boxShadow: snapshot.isDragging ? '0 0 1rem var(--theme-four)' : 'none',
+        ...provided.draggableProps.style}}>
         <audio src={audio.url} ref={audioNode} onTimeUpdate={handleTimeUpdate} onLoadedMetadata={() => {
             setAudioDuration(audioNode.current.duration);
             
