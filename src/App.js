@@ -6,7 +6,7 @@ import SideMenu from "./components/SideMenu";
 import { v4 as uuidv4 } from 'uuid';
 
 function App() {
-  // STATE
+  // COLOR THEMES --------------
   const [colorThemes] = useState([
     {themeOne: '#FFFFFF',
     themeTwo: '#D3D2ED',
@@ -118,6 +118,29 @@ function App() {
     ]);
 
     const [currentColorTheme, setCurrentColorTheme] = useState(colorThemes[1]);
+    const [toggleThemeSwitch, setToggleThemeSwitch] = useState(false);
+
+    function handleThemeChange(theme) {
+      if (toggleThemeSwitch === false) {
+        if (currentColorTheme === theme) {
+          return;
+      }
+      setCurrentColorTheme(theme);
+      setPlaylists(playlists.map(playlist => {
+        if (playlist.active === true) {
+          return {...playlist, colorTheme: theme}
+        } else {
+          return playlist;
+        }
+      }))
+      } else {
+        if (currentColorTheme === theme && playlists.filter(playlist => playlist.colorTheme === theme).length === playlists.length) {
+          return;
+      }
+      setCurrentColorTheme(theme);
+      setPlaylists(playlists.map(playlist => ({...playlist, colorTheme: theme})));
+      }
+  }
 
     useEffect(() => {
         document.documentElement.style.setProperty('--theme-one', currentColorTheme.themeOne);
@@ -125,6 +148,115 @@ function App() {
         document.documentElement.style.setProperty('--theme-three', currentColorTheme.themeThree);
         document.documentElement.style.setProperty('--theme-four', currentColorTheme.themeFour);
     }, [currentColorTheme]);
+
+  // PLAYLISTS --------------
+
+  const [playlists, setPlaylists] = useState([
+    {name: 'My Playlist 1',
+    audioFiles: [],
+    id: uuidv4(),
+    active: true,
+    colorTheme: colorThemes[1]
+  }
+  ]);
+
+  const [settingName, setSettingName] = useState(false);
+
+  function handlePlaylistClick(id, playlist) {
+    // return if clicked on active playlist
+    if (playlists.filter(playlist => playlist.id === id)[0].active === true) {
+      return;
+    }
+    // reset current audio node if there is any
+    if (playingAudioNode) {
+      playingAudioNode.pause()
+      playingAudioNode.currentTime = 0;
+      setPlayingAudioNode(null);
+    }
+    // reset playing button
+    setIsPlaying(false);
+    // reset editing mode
+    setIsEditing(false);
+    // reset setting name mode
+    if (settingName === true) {
+      setSettingName(false);
+    }
+    // set clicked playlist to active and turn off all other
+    setPlaylists(playlists.map(playlist => {
+      if (playlist.id === id) {
+        return {...playlist, active: true}
+      } else {
+        return {...playlist, active: false}
+      }
+    }));
+    // set audios to those of clicked playlist and turn off their playing mode
+    setAudios(playlists.filter(playlist => playlist.id === id)[0].audioFiles.map(audio => {
+      if (audio.playing === true) {
+        return {...audio, playing: false};
+      } else {
+        return audio;
+      }
+    }));
+    // set color theme to that of the clicked playlist
+    setCurrentColorTheme(playlist.colorTheme);
+  }
+
+  function handleAddPlaylist() {
+    if (playlists.length === 0) {
+      setPlaylists([...playlists, {
+        name: `New Playlist ${playlists.length + 1}`,
+        audioFiles: [],
+        id: uuidv4(),
+        active: true,
+        colorTheme: currentColorTheme
+        }])
+    } else {
+      setPlaylists([...playlists, {
+        name: `New Playlist ${playlists.length + 1}`,
+        audioFiles: [],
+        id: uuidv4(),
+        active: false,
+        colorTheme: currentColorTheme
+        }])
+    }
+  }
+
+  function handlePlaylistDelete(id) {
+    // turn off playing mode
+    setIsPlaying(false);
+    // if playlists are more than 1
+    if (playlists.length > 1) {
+      // if I delete the first playlist (index 0)
+      if (playlists.indexOf(playlists.filter(playlist => playlist.id === id)[0]) === 0) {
+        // delete the clicked (first one)
+        setPlaylists(playlists.filter(playlist => playlist.id != id).map(playlist => {
+          // and set the second one to active
+          if (playlists.indexOf(playlist) === 1) {
+            setAudios(playlist.audioFiles);
+            return {...playlist, active: true};
+          } else {
+            return playlist;
+          }
+        }));
+      } else {
+        // delete the clicked
+        setPlaylists(playlists.filter(playlist => playlist.id != id).map(playlist => {
+          // and set the first one to active
+          if (playlists.indexOf(playlist) === 0) {
+            setAudios(playlist.audioFiles);
+            return {...playlist, active: true};
+          } else {
+            return playlist;
+          }
+        }));
+      }
+    } else {
+      setPlaylists(playlists.filter(playlist => playlist.id != id));
+      setAudios([]);
+    }
+  }
+
+  // AUDIOS --------------
 
   const [audios, setAudios] = useState([
     {
@@ -171,6 +303,18 @@ function App() {
   const isMounted = useRef(false);
 
   useEffect(() => {
+    // when audios change, set them to the audios of currently active playlist
+    setPlaylists(playlists.map(playlist => {
+      if (playlist.active === true) {
+        return {...playlist, audioFiles: audios};
+      } else {
+        return playlist;
+      }
+    }))
+  }, [audios]);
+
+  useEffect(() => {
+    // when volume or audio node change, set the volume of that node to current volume
     if (isMounted.current) {
       if (playingAudioNode != null) {
         playingAudioNode.volume = volume / 100;
@@ -228,10 +372,10 @@ function App() {
   return (
     <div className="window">
       <div className="wrapper">
-        <TopMenu playingAudioNode={playingAudioNode} setPlayingAudioNode={setPlayingAudioNode} isEditing={isEditing} setIsEditing={setIsEditing} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios}/>
+        <TopMenu playingAudioNode={playingAudioNode} setPlayingAudioNode={setPlayingAudioNode} isEditing={isEditing} setIsEditing={setIsEditing} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios} playlists={playlists}/>
         <BottomMenu playingAudioNode={playingAudioNode} setVolume={setVolume} volume={volume} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios} isEditing={isEditing} setIsEditing={setIsEditing} togglePlaying={togglePlaying} setPlayingAudioNode={setPlayingAudioNode} handleDeleteElement={handleDeleteElement}/>
       </div>
-      <SideMenu currentColorTheme={currentColorTheme} setCurrentColorTheme={setCurrentColorTheme} colorThemes={colorThemes}/>
+      <SideMenu currentColorTheme={currentColorTheme} setCurrentColorTheme={setCurrentColorTheme} colorThemes={colorThemes} playlists={playlists} setPlaylists={setPlaylists} handlePlaylistClick={handlePlaylistClick} handleThemeChange={handleThemeChange} handleAddPlaylist={handleAddPlaylist} handlePlaylistDelete={handlePlaylistDelete} toggleThemeSwitch={toggleThemeSwitch} setToggleThemeSwitch={setToggleThemeSwitch} settingName={settingName} setSettingName={setSettingName}/>
     </div>
   );
 }

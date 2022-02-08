@@ -1,19 +1,20 @@
 import React from 'react';
 import { FaCheck } from 'react-icons/fa';
 
-export default function ThemeContent({ currentColorTheme, setCurrentColorTheme, colorThemes }) {
+export default function ThemeContent({ currentColorTheme, setCurrentColorTheme, colorThemes, handleThemeChange, toggleThemeSwitch, setToggleThemeSwitch }) {
 
-    function handleThemeChange(theme) {
-        if (currentColorTheme === theme) {
-            return;
-        }
-        setCurrentColorTheme(theme);
+    function handleToggleThemeSwitch() {
+        setToggleThemeSwitch(!toggleThemeSwitch);
     }
 
   return (
-  <div className='theme-content'>
-      <p>Color Themes:</p>
+  <div className='theme-content side-menu-instance'>
+      <p>Color Themes</p>
       <div className='theme-content__wrapper'>
+        <div className='theme-content__switch' onClick={handleToggleThemeSwitch}>
+            <p>Set for all playlists</p>
+            {toggleThemeSwitch === true && < FaCheck className='theme-content__switch--checker'/>}
+        </div>
         {colorThemes.map((theme) => (
             <div className='theme-rect' key={theme.id} style={{
                 background: `linear-gradient(-45deg, ${theme.themeOne} 0% 25%, ${theme.themeTwo} 25% 50%, ${theme.themeThree} 50% 75%, ${theme.themeFour} 75% 100%)`,

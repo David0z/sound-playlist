@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react/cjs/react.development';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function TopMenu({ isEditing, setIsEditing, isPlaying, setIsPlaying, audios, setAudios, playingAudioNode, setPlayingAudioNode}) {
+export default function TopMenu({ isEditing, setIsEditing, isPlaying, setIsPlaying, audios, setAudios, playingAudioNode, setPlayingAudioNode, playlists}) {
 
   const [link, setLink] = useState('');
   const [name, setName] = useState('');
@@ -44,6 +44,9 @@ export default function TopMenu({ isEditing, setIsEditing, isPlaying, setIsPlayi
 
   function handleAddNewAudio(e) {
     e.preventDefault();
+    if (playlists.filter(playlist => playlist.active === true).length === 0) {
+      return;
+    }
     if (link == '') {
       setLinkAlert(true);
     } else if (!/\.(mp3|wav|ogg)$/i.test(link)) {
