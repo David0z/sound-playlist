@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 function App() {
   // COLOR THEMES --------------
-  const [colorThemes] = useState([
+  const [colorThemes, setColorThemes] = useState([
     {themeOne: '#FFFFFF',
     themeTwo: '#D3D2ED',
     themeThree: '#7075E5',
@@ -153,7 +153,44 @@ function App() {
 
   const [playlists, setPlaylists] = useState([
     {name: 'My Playlist 1',
-    audioFiles: [],
+    audioFiles: [
+      {
+        title: 'First Sound Title',
+        url: 'https://actions.google.com/sounds/v1/crowds/voices_angry.ogg',
+        playing: false,
+        id: uuidv4()
+      },
+      {
+        title: 'Second Sound Title',
+        url: 'https://actions.google.com/sounds/v1/crowds/voices_on_street_accent.ogg',
+        playing: false,
+        id: uuidv4()
+      },
+      {
+        title: 'Tird Sound Title',
+        url: 'https://actions.google.com/sounds/v1/emergency/emergency_siren_close_long.ogg',
+        playing: false,
+        id: uuidv4()
+      },
+      {
+        title: 'Fourth Sound Title',
+        url: 'https://actions.google.com/sounds/v1/crowds/voices_angry.ogg',
+        playing: false,
+        id: uuidv4()
+      },
+      {
+        title: 'Fifth Sound Title',
+        url: 'https://actions.google.com/sounds/v1/crowds/voices_on_street_accent.ogg',
+        playing: false,
+        id: uuidv4()
+      },
+      {
+        title: 'Sixth Sound Title',
+        url: 'https://actions.google.com/sounds/v1/emergency/emergency_siren_close_long.ogg',
+        playing: false,
+        id: uuidv4()
+      },
+    ],
     id: uuidv4(),
     active: true,
     colorTheme: colorThemes[1]
@@ -233,6 +270,7 @@ function App() {
           // and set the second one to active
           if (playlists.indexOf(playlist) === 1) {
             setAudios(playlist.audioFiles);
+            setCurrentColorTheme(playlist.colorTheme);
             return {...playlist, active: true};
           } else {
             return playlist;
@@ -244,6 +282,7 @@ function App() {
           // and set the first one to active
           if (playlists.indexOf(playlist) === 0) {
             setAudios(playlist.audioFiles);
+            setCurrentColorTheme(playlist.colorTheme);
             return {...playlist, active: true};
           } else {
             return playlist;
@@ -258,44 +297,7 @@ function App() {
 
   // AUDIOS --------------
 
-  const [audios, setAudios] = useState([
-    {
-      title: 'First Sound Title',
-      url: 'https://actions.google.com/sounds/v1/crowds/voices_angry.ogg',
-      playing: false,
-      id: uuidv4()
-    },
-    {
-      title: 'Second Sound Title',
-      url: 'https://actions.google.com/sounds/v1/crowds/voices_on_street_accent.ogg',
-      playing: false,
-      id: uuidv4()
-    },
-    {
-      title: 'Tird Sound Title',
-      url: 'https://actions.google.com/sounds/v1/emergency/emergency_siren_close_long.ogg',
-      playing: false,
-      id: uuidv4()
-    },
-    {
-      title: 'Fourth Sound Title',
-      url: 'https://actions.google.com/sounds/v1/crowds/voices_angry.ogg',
-      playing: false,
-      id: uuidv4()
-    },
-    {
-      title: 'Fifth Sound Title',
-      url: 'https://actions.google.com/sounds/v1/crowds/voices_on_street_accent.ogg',
-      playing: false,
-      id: uuidv4()
-    },
-    {
-      title: 'Sixth Sound Title',
-      url: 'https://actions.google.com/sounds/v1/emergency/emergency_siren_close_long.ogg',
-      playing: false,
-      id: uuidv4()
-    },
-  ]);
+  const [audios, setAudios] = useState([]);
   const [volume, setVolume] = useState(50);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -368,6 +370,54 @@ function App() {
   function handleDeleteElement(id) {
     setAudios(audios.filter(audio => audio.id != id));
   }
+
+  // LOCAL STORAGE --------------
+
+  useEffect(() => {
+    if (localStorage.getItem('playlists')) {
+      // if there are playlists in storage
+      if (JSON.parse(localStorage.getItem('playlists')).length > 0) {
+        setPlaylists(JSON.parse(localStorage.getItem('playlists')));
+        setCurrentColorTheme(JSON.parse(localStorage.getItem('playlists')).filter(playlist => playlist.active === true)[0].colorTheme);
+        setAudios(JSON.parse(localStorage.getItem('playlists')).filter(playlist => playlist.active === true)[0].audioFiles);
+      } else {
+        // if playlists are empty in storage
+        setPlaylists([]);
+        setAudios([]);
+        setCurrentColorTheme(JSON.parse(localStorage.getItem('lastColorTheme')));
+      }
+    } else {
+      // important for starting point, with no storage
+      if (playlists.length > 0) {
+        setCurrentColorTheme(playlists.filter(playlist => playlist.active === true)[0].colorTheme)
+        setAudios(playlists.filter(playlist => playlist.active === true)[0].audioFiles)
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('lastColorTheme', JSON.stringify(currentColorTheme));
+  }, [currentColorTheme]);
+
+  useEffect(() => {
+    localStorage.setItem('playlists', JSON.stringify(playlists));
+  }, [playlists]);
+
+  useEffect(() => {
+    if (localStorage.getItem('colorThemes')) {
+      setColorThemes(JSON.parse(localStorage.getItem('colorThemes')));
+    } else {
+      localStorage.setItem('colorThemes', JSON.stringify(colorThemes));
+    }
+
+    if (localStorage.getItem('themeSwitchToggler')) {
+      setToggleThemeSwitch(JSON.parse(localStorage.getItem('themeSwitchToggler')));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('themeSwitchToggler', JSON.stringify(toggleThemeSwitch));
+  }, [toggleThemeSwitch]);
 
   return (
     <div className="window">
