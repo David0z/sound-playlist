@@ -117,7 +117,7 @@ function App() {
     id: uuidv4()}
     ]);
 
-    const [currentColorTheme, setCurrentColorTheme] = useState(colorThemes[1]);
+    const [currentColorTheme, setCurrentColorTheme] = useState(colorThemes[0]);
     const [toggleThemeSwitch, setToggleThemeSwitch] = useState(false);
 
     function handleThemeChange(theme) {
@@ -193,7 +193,7 @@ function App() {
     ],
     id: uuidv4(),
     active: true,
-    colorTheme: colorThemes[1]
+    colorTheme: colorThemes[0]
   }
   ]);
 
@@ -379,7 +379,7 @@ function App() {
       if (JSON.parse(localStorage.getItem('playlists')).length > 0) {
         setPlaylists(JSON.parse(localStorage.getItem('playlists')));
         setCurrentColorTheme(JSON.parse(localStorage.getItem('playlists')).filter(playlist => playlist.active === true)[0].colorTheme);
-        setAudios(JSON.parse(localStorage.getItem('playlists')).filter(playlist => playlist.active === true)[0].audioFiles);
+        setAudios(JSON.parse(localStorage.getItem('playlists')).filter(playlist => playlist.active === true)[0].audioFiles.map(file => ({...file, playing: false})));
       } else {
         // if playlists are empty in storage
         setPlaylists([]);

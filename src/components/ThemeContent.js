@@ -1,9 +1,14 @@
 import React from 'react';
 import { FaCheck } from 'react-icons/fa';
 
-export default function ThemeContent({ currentColorTheme, setCurrentColorTheme, colorThemes, handleThemeChange, toggleThemeSwitch, setToggleThemeSwitch }) {
+export default function ThemeContent({ currentColorTheme, colorThemes, handleThemeChange, toggleThemeSwitch, setToggleThemeSwitch, playlists, setPlaylists }) {
 
     function handleToggleThemeSwitch() {
+        if (toggleThemeSwitch === false) {
+            setPlaylists(playlists.map(playlist => (
+                {...playlist, colorTheme: currentColorTheme}
+            )))
+        }
         setToggleThemeSwitch(!toggleThemeSwitch);
     }
 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FaCheck, FaPen, FaTimes } from 'react-icons/fa';
+import React from 'react';
+import { FaCheck, FaPen, FaTrashAlt } from 'react-icons/fa';
 
 export default function PlaylistEditRect({ playlists, setPlaylists, handlePlaylistClick, handlePlaylistDelete, playlist, settingName, setSettingName }) {
 
@@ -35,7 +35,7 @@ export default function PlaylistEditRect({ playlists, setPlaylists, handlePlayli
         ></input>
         {playlist.active === true && 
         <div className='playlist-edit__buttons'>
-          < FaTimes className='playlist-edit__button playlist-edit__button--delete' title='Delete' onClick={() => handlePlaylistDelete(playlist.id)} />
+          < FaTrashAlt className='playlist-edit__button playlist-edit__button--delete' title='Delete' onClick={() => handlePlaylistDelete(playlist.id)} />
           <div className='playlist-edit__button' onClick={handleRenameClick}>
             {settingName === false ? < FaPen title='Rename' /> : < FaCheck title='Save' />}
           </div>
