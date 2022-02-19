@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import TopMenu from "./components/TopMenu";
 import BottomMenu from "./components/BottomMenu";
 import SideMenu from "./components/SideMenu";
-// TEMPORARY
 import { v4 as uuidv4 } from 'uuid';
 
 function App() {
@@ -372,19 +371,28 @@ function App() {
   }
 
   // LOCAL STORAGE --------------
+  
+  // useLayoutEffect for instant print of custom color theme
+  useLayoutEffect(() => {
+    if (localStorage.getItem('playlists')) {
+      if (JSON.parse(localStorage.getItem('playlists')).length > 0) {
+        setCurrentColorTheme(JSON.parse(localStorage.getItem('playlists')).filter(playlist => playlist.active === true)[0].colorTheme);
+      } else {
+        setCurrentColorTheme(JSON.parse(localStorage.getItem('lastColorTheme')));
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (localStorage.getItem('playlists')) {
       // if there are playlists in storage
       if (JSON.parse(localStorage.getItem('playlists')).length > 0) {
         setPlaylists(JSON.parse(localStorage.getItem('playlists')));
-        setCurrentColorTheme(JSON.parse(localStorage.getItem('playlists')).filter(playlist => playlist.active === true)[0].colorTheme);
         setAudios(JSON.parse(localStorage.getItem('playlists')).filter(playlist => playlist.active === true)[0].audioFiles.map(file => ({...file, playing: false})));
       } else {
         // if playlists are empty in storage
         setPlaylists([]);
         setAudios([]);
-        setCurrentColorTheme(JSON.parse(localStorage.getItem('lastColorTheme')));
       }
     } else {
       // important for starting point, with no storage
@@ -395,10 +403,12 @@ function App() {
     }
   }, []);
 
+  // save current color theme in storage
   useEffect(() => {
     localStorage.setItem('lastColorTheme', JSON.stringify(currentColorTheme));
   }, [currentColorTheme]);
 
+  // save playlists in storage
   useEffect(() => {
     localStorage.setItem('playlists', JSON.stringify(playlists));
   }, [playlists]);
@@ -419,13 +429,22 @@ function App() {
     localStorage.setItem('themeSwitchToggler', JSON.stringify(toggleThemeSwitch));
   }, [toggleThemeSwitch]);
 
+  // SIDE MENU STUFF ------------------------------------------------------
+  const [toggleMenu, setToggleMenu] = useState(false);
+
+  function handleBodyClick() {
+    if (toggleMenu === true) {
+      setToggleMenu(false);
+    }
+  }
+
   return (
-    <div className="window">
+    <div className="window" onClick={handleBodyClick}>
       <div className="wrapper">
         <TopMenu playingAudioNode={playingAudioNode} setPlayingAudioNode={setPlayingAudioNode} isEditing={isEditing} setIsEditing={setIsEditing} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios} playlists={playlists}/>
         <BottomMenu playingAudioNode={playingAudioNode} setVolume={setVolume} volume={volume} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios} isEditing={isEditing} setIsEditing={setIsEditing} togglePlaying={togglePlaying} setPlayingAudioNode={setPlayingAudioNode} handleDeleteElement={handleDeleteElement}/>
       </div>
-      <SideMenu currentColorTheme={currentColorTheme} setCurrentColorTheme={setCurrentColorTheme} colorThemes={colorThemes} playlists={playlists} setPlaylists={setPlaylists} handlePlaylistClick={handlePlaylistClick} handleThemeChange={handleThemeChange} handleAddPlaylist={handleAddPlaylist} handlePlaylistDelete={handlePlaylistDelete} toggleThemeSwitch={toggleThemeSwitch} setToggleThemeSwitch={setToggleThemeSwitch} settingName={settingName} setSettingName={setSettingName}/>
+      <SideMenu currentColorTheme={currentColorTheme} setCurrentColorTheme={setCurrentColorTheme} colorThemes={colorThemes} playlists={playlists} setPlaylists={setPlaylists} handlePlaylistClick={handlePlaylistClick} handleThemeChange={handleThemeChange} handleAddPlaylist={handleAddPlaylist} handlePlaylistDelete={handlePlaylistDelete} toggleThemeSwitch={toggleThemeSwitch} setToggleThemeSwitch={setToggleThemeSwitch} settingName={settingName} setSettingName={setSettingName} toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />
     </div>
   );
 }

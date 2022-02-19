@@ -4,13 +4,14 @@ import { FaAdjust, FaList } from 'react-icons/fa';
 import ThemeContent from './ThemeContent';
 import PlaylistsContent from './PlaylistsContent';
 
-export default function SideMenu({ currentColorTheme, setCurrentColorTheme, colorThemes, playlists, setPlaylists, handlePlaylistClick, handleThemeChange, handleAddPlaylist, handlePlaylistDelete, toggleThemeSwitch, setToggleThemeSwitch, settingName, setSettingName }) {
+export default function SideMenu({ currentColorTheme, setCurrentColorTheme, colorThemes, playlists, setPlaylists, handlePlaylistClick, handleThemeChange, handleAddPlaylist, handlePlaylistDelete, toggleThemeSwitch, setToggleThemeSwitch, settingName, setSettingName, toggleMenu, setToggleMenu }) {
 
-  const [toggleMenu, setToggleMenu] = useState(false);
   const [menuContent, setMenuContent] = useState(null);
 
   return (
-  <div className='side-menu'>
+  <div className='side-menu' onClick={(e) => {
+    e.stopPropagation();
+  }}>
       <div className='side-menu__wrapper'>
 
           <div className='side-menu__content' style={{

@@ -135,6 +135,7 @@ export default function AudioElement({isPlaying, audios, setAudios, isEditing, t
                     min='0' 
                     max={audioDuration}
                     value={currentTime}
+                    step='any'
                     onChange={handleTimingChange}
 
                     />
