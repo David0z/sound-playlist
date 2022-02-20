@@ -74,7 +74,7 @@ export default function TopMenu({ isEditing, setIsEditing, isPlaying, setIsPlayi
   return (
       <form className='menu menu__top'>
           <div className='line'>
-            <input className='input' type="text" placeholder='Paste your audio URL here...' required onChange={handleLinkChange} value={link}/>
+            <input className='input' type="text" placeholder='Paste your audio URL here...' required onChange={handleLinkChange} value={link} title='Accepted formats: mp3, wav, ogg' />
 
             {linkAlert === true &&
               <div className='alert'>Fill in the link!</div>}

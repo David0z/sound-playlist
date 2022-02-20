@@ -3,6 +3,7 @@ import TopMenu from "./components/TopMenu";
 import BottomMenu from "./components/BottomMenu";
 import SideMenu from "./components/SideMenu";
 import { v4 as uuidv4 } from 'uuid';
+import PlayError from "./PlayError";
 
 function App() {
   // COLOR THEMES --------------
@@ -328,6 +329,12 @@ function App() {
 
 
   function togglePlaying(id, audioNode) {
+    if (audios.filter(audio => audio.error).length > 0) {
+      if (audios.filter(audio => audio.error === true)[0].id === id) {
+        setIsError(true);
+        return;
+      }
+    }
     if(isPlaying && audios.filter(audio => audio.playing === true)[0].id != id) {
     } else {
       setIsPlaying(!isPlaying);
@@ -438,13 +445,55 @@ function App() {
     }
   }
 
+  // testing
+
+  // change to false
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    if (playingAudioNode != null) {
+      if (isPlaying === true) {
+
+          const playPromise = playingAudioNode.play();
+
+          playPromise.catch(function(error) {
+            setIsError(true);
+            // console.log(error);
+            setPlayingAudioNode(null);
+            setIsPlaying(false);
+            setAudios(prevAudios => {
+              return prevAudios.map(audio => {
+                if (audio.playing === true) {
+                  return {...audio, error: true};
+                } else {
+                  return audio;
+                }
+              });
+            });
+            setAudios(prevAudios => {
+              return prevAudios.map(audio => {
+                return {...audio, playing: false};
+              });
+            })
+          });
+      }
+    }
+  }, [playingAudioNode]);
+
   return (
     <div className="window" onClick={handleBodyClick}>
       <div className="wrapper">
+
         <TopMenu playingAudioNode={playingAudioNode} setPlayingAudioNode={setPlayingAudioNode} isEditing={isEditing} setIsEditing={setIsEditing} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios} playlists={playlists}/>
-        <BottomMenu playingAudioNode={playingAudioNode} setVolume={setVolume} volume={volume} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios} isEditing={isEditing} setIsEditing={setIsEditing} togglePlaying={togglePlaying} setPlayingAudioNode={setPlayingAudioNode} handleDeleteElement={handleDeleteElement}/>
+
+        <BottomMenu playingAudioNode={playingAudioNode} setVolume={setVolume} volume={volume} isPlaying={isPlaying} setIsPlaying={setIsPlaying} audios={audios} setAudios={setAudios} isEditing={isEditing} setIsEditing={setIsEditing} togglePlaying={togglePlaying} setPlayingAudioNode={setPlayingAudioNode} handleDeleteElement={handleDeleteElement} setIsError={setIsError} />
+
       </div>
+
       <SideMenu currentColorTheme={currentColorTheme} setCurrentColorTheme={setCurrentColorTheme} colorThemes={colorThemes} playlists={playlists} setPlaylists={setPlaylists} handlePlaylistClick={handlePlaylistClick} handleThemeChange={handleThemeChange} handleAddPlaylist={handleAddPlaylist} handlePlaylistDelete={handlePlaylistDelete} toggleThemeSwitch={toggleThemeSwitch} setToggleThemeSwitch={setToggleThemeSwitch} settingName={settingName} setSettingName={setSettingName} toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />
+
+      {isError === true && < PlayError setIsError={setIsError} setAudios={setAudios} />}
+
     </div>
   );
 }

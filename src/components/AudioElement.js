@@ -174,6 +174,7 @@ export default function AudioElement({isPlaying, audios, setAudios, isEditing, t
         })()
         }
         </div>}
+        {audio.error === true && <div className='audio__error'></div>}
     </div>
     )}
     </Draggable>

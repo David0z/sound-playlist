@@ -1,9 +1,15 @@
 import React from 'react';
 import { FaStepBackward, FaStepForward, FaPlay, FaPause } from "react-icons/fa";
 
-export default function TimingControl({ isPlaying, setIsPlaying, playingAudioNode, audios, setAudios, isEditing, playMode }) {
+export default function TimingControl({ isPlaying, setIsPlaying, playingAudioNode, audios, setAudios, isEditing, playMode, setIsError }) {
 
   function handlePlayPause() {
+    if (audios.filter(audio => audio.error).length > 0) {
+      if (audios.filter(audio => audio.error === true)[0].id === audios[0].id) {
+        setIsError(true);
+        return;
+      }
+    }
     if (isPlaying === false) {
       if (audios.length === 0 || isEditing === true) {
         return;
