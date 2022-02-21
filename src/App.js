@@ -445,9 +445,8 @@ function App() {
     }
   }
 
-  // testing
+  // ERROR (audio node play error handler)
 
-  // change to false
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {

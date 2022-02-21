@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
+@mixin querry {
+    @media (orientation: portrait), (max-width: 1000px) {
+        @content;
+    }
+}
+
 :root {
     --theme-one: #A7FF83;
     --theme-two: #17B978;
@@ -7,6 +13,9 @@
     --theme-four: #071A52;
     --alert: #720808;
     font-size: 14px;
+    @include querry() {
+        font-size: 1.55vw;
+    }
 }
 
 * {
@@ -29,10 +38,17 @@ html, body {
     align-items: center;
     box-sizing: border-box;
     background-color: var(--theme-one);
+    @include querry() {
+        min-height: 100vh;
+        align-items: flex-start;
+    }
 }
 
 .wrapper {
     width: 54rem;
+    @include querry() {
+        margin-top: 2rem;
+    }
 }
 
 .menu {
@@ -145,8 +161,34 @@ html, body {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            $width: 12.8rem;
-            $height: 3.8rem;
+            --width: 12.8rem;
+            --height: 3.8rem;
+            $width: var(--width);
+            $height: var(--height);
+            @include querry() {
+                --height: 4.8rem;
+                background-color: var(--theme-two);
+                padding: 2rem 0 1rem 0;
+                justify-content: space-around;
+                $small-gap: 2%;
+                $big-gap: 6%;
+                $first: 50% - $big-gap;
+                $second: 50% + $big-gap;
+                $third: $second + $small-gap;
+                $fourth: $first - $small-gap;
+                clip-path: polygon(#{$first} 0%, #{$second} 0%, #{$third} 14%, 100% 14%, 100% 100%, 0% 100%, 0% 14%, #{$fourth} 14%);
+            }
+
+            &__parent {
+                @include querry() {
+                    position: fixed;
+                    z-index: 1;
+                    width: 100%;
+                    left: 0;    
+                    bottom: 0;
+                    filter: drop-shadow(0 0 2rem var(--theme-three));
+                }
+            }
 
             .volume-control {
                 position: relative;
@@ -157,6 +199,9 @@ html, body {
                     height: $height;
                     width: $width;
                     border-radius: 1rem;
+                    @include querry() {
+                        width: calc(#{$width} + 1rem);
+                    }
 
                     &:active {
                         cursor: -webkit-grabbing;
@@ -205,10 +250,14 @@ html, body {
                     border-radius: 1rem;
 
                     &__play-pause {
-                        $new-size: $size + 0.8rem;
+                        $new-size: calc(#{$size} + 0.8rem);
                         padding: 0.8rem;
                         width: $new-size;
                         height: $new-size;
+                        @include querry() {
+                            width: calc(#{$size} + 1.8rem);
+                            height: calc(#{$size} + 1.8rem);
+                        }
                     }
 
                     &:hover {
@@ -229,16 +278,28 @@ html, body {
                 display: flex;
                 justify-content: space-between;
                 user-select: none;
+                @include querry() {
+                    width: min-content;
+                }
 
                 &__text-wrap {
-                    width: $width - $height;
+                    width: calc(#{$width} - #{$height});
                     text-align: center;
+                    @include querry() {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        padding: 0 .5rem;
+                    }
                 }
 
                 &__main {
                     padding: 0;
                     margin: 0.2rem 0 0 0;
                     color: var(--theme-two);
+                    @include querry() {
+                        margin: 0;
+                    }
                 }
 
                 &__second {
@@ -276,6 +337,9 @@ html, body {
 
         .playlist-display {
             margin-top: 1rem;
+            @include querry() {
+                margin: 0;
+            }
             
             .track-counter {
                 user-select: none;
@@ -325,6 +389,9 @@ html, body {
                     height: calc(9rem * 3 + 0.6rem * 2);
                     padding-right: 0.5rem;
                     overflow-y: scroll;
+                    @include querry() {
+                        height: 65vh;
+                    }
 
                     &::-webkit-scrollbar {
                         $scroll-width: 1.4rem;
@@ -585,6 +652,9 @@ html, body {
             height: 85vh;
             overflow-y: scroll;
             overflow-x: hidden;
+            @include querry() {
+                height: 75vh;
+            }
 
             &::-webkit-scrollbar {
                 width: 0.8rem;
@@ -631,6 +701,9 @@ html, body {
             height: 85vh;
             overflow-y: scroll;
             overflow-x: hidden;
+            @include querry() {
+                height: 75vh;
+            }
 
             &::-webkit-scrollbar {
                 width: 0.8rem;
@@ -720,6 +793,7 @@ html, body {
     backdrop-filter: blur(.2rem);
     display: grid;
     place-items: center;
+    z-index: 3;
 
     &__message-div {
         width: 28rem;

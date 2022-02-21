@@ -74,22 +74,22 @@ export default function TopMenu({ isEditing, setIsEditing, isPlaying, setIsPlayi
   return (
       <form className='menu menu__top'>
           <div className='line'>
-            <input className='input' type="text" placeholder='Paste your audio URL here...' required onChange={handleLinkChange} value={link} title='Accepted formats: mp3, wav, ogg' />
+            <input className='input' type="text" placeholder='Paste your audio URL here...' required onChange={handleLinkChange} value={link} title='Accepted formats: mp3, wav, ogg' tabIndex='1' />
 
             {linkAlert === true &&
               <div className='alert'>Fill in the link!</div>}
             {linkValidity === true &&
               <div className='alert alert__validity'>Invalid link format!</div>}
 
-            <button className='button add' type='submit' onClick={handleAddNewAudio}>Add new Audio file</button>
+            <button className='button add' type='submit' onClick={handleAddNewAudio} tabIndex='3' >Add new Audio file</button>
           </div>
           <div className='line'>
-            <input className='input' type="text" placeholder='Type in a new audio title...' required onChange={handleNameChange} value={name}/>
+            <input className='input' type="text" placeholder='Type in a new audio title...' required onChange={handleNameChange} value={name} tabIndex='2'/>
 
             {nameAlert === true &&
               <div className='alert'>Fill in the title!</div>}
 
-            <button className='button edit' type='button' onClick={handleEditing}>{
+            <button className='button edit' type='button' onClick={handleEditing} tabIndex='4'>{
               isEditing === false ? 'Edit my playlist' : 'Save'
             }</button>
           </div>
