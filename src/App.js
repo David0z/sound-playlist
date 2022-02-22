@@ -458,7 +458,6 @@ function App() {
           playPromise.catch(function(error) {
             setIsError(true);
             // console.log(error);
-            setPlayingAudioNode(null);
             setIsPlaying(false);
             setAudios(prevAudios => {
               return prevAudios.map(audio => {
@@ -473,7 +472,8 @@ function App() {
               return prevAudios.map(audio => {
                 return {...audio, playing: false};
               });
-            })
+            });
+            setPlayingAudioNode(null);
           });
       }
     }
