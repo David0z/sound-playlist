@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import TopMenu from "./components/TopMenu";
 import BottomMenu from "./components/BottomMenu";
 import SideMenu from "./components/SideMenu";

@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react/cjs/react.development';
+import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function TopMenu({ isEditing, setIsEditing, isPlaying, setIsPlaying, audios, setAudios, playingAudioNode, setPlayingAudioNode, playlists}) {

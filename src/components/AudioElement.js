@@ -1,6 +1,5 @@
-import { React, useRef, useState} from 'react';
+import { React, useRef, useState, useEffect} from 'react';
 import { FaPlay, FaPause, FaGripVertical, FaTimes } from "react-icons/fa";
-import { useEffect } from 'react/cjs/react.development';
 import { Draggable } from 'react-beautiful-dnd';
 
 export default function AudioElement({isPlaying, audios, setAudios, isEditing, togglePlaying, audio, playMode, setPlayingAudioNode, handleDeleteElement }) {
